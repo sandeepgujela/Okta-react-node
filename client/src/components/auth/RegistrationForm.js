@@ -2,9 +2,11 @@ import React from 'react';
 import OktaAuth from '@okta/okta-auth-js';
 import { withAuth } from '@okta/okta-react';
 import config from '../../app.config';
+import axios from 'axios';
 
 export default withAuth(
-    class RegistrationForm extends React.Component{
+    class RegistrationFormFe extends React.Component{
+      axiosInstance;
         constructor(props) {
             super(props);
             this.state = {
@@ -45,33 +47,31 @@ export default withAuth(
         handlePasswordChange(e) {
         this.setState({ password: e.target.value });
         }
-        
-        handleSubmit(e){
-            e.preventDefault();
-        
-            fetch('/api/users',{
-                method:'POST',
-                headers:{
-                    Accept:'application/json',
-                    'Content-Type':'application/json'
-                },
-                body : JSON.stringify(this.state)
-            }) .then(user => {
-                this.oktaAuth
-                .signIn({
-                    username: this.state.email,
-                    password: this.state.password
-                })
-                .then(res =>
-                    {
-                        console.log('Registration -> login response',res,res.tostring());
-                        this.setState({
-                            sessionToken: res.sessionToken
-                        })
-                    }
-                );
+
+        axiosInstance = axios.create({
+          baseURL: 'https://dev-910476.okta.com/api/v1',
+          timeout: 2000,
+          headers: {'Authorization': 'SSWS 00ogLmr_R3TEvawgd5jGUbaKQJCCEpDeUNw79AhGHq'}
+        });
+
+        handleSubmit(e) { 
+            const newUser = {
+                profile: {
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    email: this.state.email,
+                    login: this.state.email
+                }
+            };
+            this.axiosInstance.post('/users?activate=false', newUser)
+            .then(function (response) {
+              console.log('axios',response);
             })
-            .catch(err => console.log('Error in RegistrationForm.js',err));
+            .catch(function (error) {
+              console.log('axios error',error);
+
+            });
+            e.preventDefault();
         }
 
         render() {
