@@ -49,9 +49,9 @@ export default withAuth(
         }
 
         axiosInstance = axios.create({
-          baseURL: 'https://dev-910476.okta.com/api/v1',
+          baseURL: `${config.url}/api/v1`,
           timeout: 2000,
-          headers: {'Authorization': 'SSWS 00ogLmr_R3TEvawgd5jGUbaKQJCCEpDeUNw79AhGHq'}
+          headers: {'Authorization': config.authorisation}
         });
 
         handleSubmit(e) { 
@@ -61,6 +61,9 @@ export default withAuth(
                     lastName: this.state.lastName,
                     email: this.state.email,
                     login: this.state.email
+                },
+                credentials: {
+                  password : { "value": "Testing@123" }
                 }
             };
             this.axiosInstance.post('/users?activate=false', newUser)
