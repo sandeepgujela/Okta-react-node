@@ -63,10 +63,10 @@ export default withAuth(
                     login: this.state.email
                 },
                 credentials: {
-                  password : { "value": "Testing@123" }
+                  password : { "value": "Test@123" }
                 }
             };
-            this.axiosInstance.post('/users?activate=false', newUser)
+            this.axiosInstance.post('/users?activate=true&sendEmail=true', newUser)
             .then(function (response) {
               console.log('axios',response);
             })
